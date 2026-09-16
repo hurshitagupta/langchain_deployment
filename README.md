@@ -220,3 +220,110 @@ uv run pytest tests/test_health_readiness.py -v > outputs/test_health_readiness.
 ```
 
 Screenshots of successful liveness and readiness responses and the saved pytest output are included in the `outputs/` folder as supporting evidence.
+
+---
+
+## Task 4 — Limits
+
+Task 4 adds basic request limits to the deployed LangChain API. The goal is to prevent excessive requests, oversized inputs, and model calls that take too long.
+
+### Implemented Limits
+
+The API implements three limits:
+
+| Limit              |          Configured Value | Failure Response |
+| ------------------ | ------------------------: | ---------------: |
+| Per-IP rate limit  | 5 requests per 60 seconds |         HTTP 429 |
+| Request size limit |                4096 bytes |         HTTP 413 |
+| Request timeout    |                10 seconds |         HTTP 504 |
+
+### 1. Per-IP Rate Limiting
+
+The API tracks recent request timestamps for each client IP.
+
+Only requests made during the last 60 seconds are counted. A client can make up to 5 requests within this window.
+
+If the limit is exceeded, the API returns:
+
+```text
+HTTP 429
+rate limit exceeded
+```
+
+Old request timestamps are removed once they fall outside the 60-second window.
+
+### 2. Request Size Limit
+
+Before sending the question to the LangChain model, the application calculates the size of the question in bytes.
+
+The maximum allowed size is:
+
+```text
+4096 bytes
+```
+
+If the request exceeds this limit, the API returns:
+
+```text
+HTTP 413
+request too large
+```
+
+### 3. Per-Request Timeout
+
+The LangChain model call is executed using `asyncio.wait_for()`.
+
+The configured timeout is:
+
+```text
+10 seconds
+```
+
+If the model does not respond within this time, the request is stopped and the API returns:
+
+```text
+HTTP 504
+request timed out
+```
+
+This prevents a slow or unresponsive model request from waiting indefinitely.
+
+### Run the Application
+
+From the project root:
+
+```bash
+uv run uvicorn limits.limits:app --reload
+```
+
+The FastAPI Swagger interface is available at:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Use the `POST /v1/invoke` endpoint to send a question.
+
+Example request:
+
+```json
+{
+  "question": "What is LangChain?"
+}
+```
+
+A successful request returns HTTP `200` with the model response.
+
+### Automated Tests
+
+The automated tests cover both successful and failure scenarios without requiring unnecessary external model calls.
+
+```bash
+uv run pytest tests/test_limits.py -v
+```
+
+Save the test output as evidence:
+
+```bash
+uv run pytest tests/test_limits.py -v > outputs/test_limits.txt 2>&1
+```
