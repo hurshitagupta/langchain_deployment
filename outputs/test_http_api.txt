@@ -1,0 +1,19 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Hurshita Gupta\OneDrive\Desktop\langchain_deployment\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Hurshita Gupta\OneDrive\Desktop\langchain_deployment
+configfile: pyproject.toml
+plugins: anyio-4.15.1, langsmith-0.12.5
+collecting ... collected 3 items
+
+tests/test_http_api.py::test_invoke_success PASSED                       [ 33%]
+tests/test_http_api.py::test_invoke_invalid_input PASSED                 [ 66%]
+tests/test_http_api.py::test_stream_success PASSED                       [100%]
+
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\Hurshita Gupta\OneDrive\Desktop\langchain_deployment\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 3 passed, 1 warning in 0.84s =========================
