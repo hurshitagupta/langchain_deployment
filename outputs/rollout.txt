@@ -1,0 +1,6 @@
+=== DEPLOYMENT STARTED ===
+Deploying version: 1.1.0
+ERROR: Version 1.1.0 failed readiness check
+ROLLBACK: Returning to version 1.0.0
+SUCCESS: Version 1.0.0 restored
+=== DEPLOYMENT FINISHED ===

@@ -327,3 +327,63 @@ Save the test output as evidence:
 ```bash
 uv run pytest tests/test_limits.py -v > outputs/test_limits.txt 2>&1
 ```
+
+---
+
+## Task 5 — Rollout and Rollback
+
+Task 5 demonstrates a simple rollout and rollback process using a local version-based simulation.
+
+The goal is to show what happens when a new release fails its readiness check and how the application can return to the previous stable version.
+
+### Implementation
+
+The rollout simulation is implemented in:
+
+```text
+rollout/rollout.py
+```
+
+Two versions are used in the simulation:
+
+* `1.0.0` — previous stable version
+* `1.1.0` — new release
+
+The `deploy()` function simulates deploying a version and checking whether it is ready.
+
+If the readiness check succeeds, the deployment is marked as successful.
+
+If the readiness check fails, the deployment returns a failure result and the `rollback()` function restores the previous stable version.
+
+
+### Run the Rollout Simulation
+
+Run:
+
+```bash
+uv run python -m rollout.rollout
+```
+
+### Bad Release Evidence
+
+The bad release output is saved as evidence using:
+
+```bash
+uv run python -m rollout.rollout > outputs/rollout.txt 2>&1
+```
+
+This output demonstrates that version `1.1.0` failed its simulated readiness check and triggered a rollback to version `1.0.0`.
+
+### Automated Tests
+
+Run:
+
+```bash
+uv run pytest tests/test_rollout.py -v
+```
+
+Save the test output:
+
+```bash
+uv run pytest tests/test_rollout.py -v > outputs/test_rollout.txt 2>&1
+```
