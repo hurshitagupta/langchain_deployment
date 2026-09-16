@@ -1,0 +1,13 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Hurshita Gupta\OneDrive\Desktop\langchain_deployment\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Hurshita Gupta\OneDrive\Desktop\langchain_deployment
+configfile: pyproject.toml
+plugins: anyio-4.15.1, langsmith-0.12.5
+collecting ... collected 3 items
+
+tests/test_containerisation.py::test_dockerfile_has_required_configuration PASSED [ 33%]
+tests/test_containerisation.py::test_dockerfile_does_not_copy_env_file PASSED [ 66%]
+tests/test_containerisation.py::test_dockerignore_protects_env_file PASSED [100%]
+
+============================== 3 passed in 0.10s ==============================
