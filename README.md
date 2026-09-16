@@ -138,3 +138,85 @@ uv run pytest tests/test_containerisation.py -v > outputs/test_containerisation.
 ```
 
 The saved build log and automated test output provide evidence that the service can be packaged reproducibly and that the required container security configuration is present.
+
+---
+
+## Task 3 — Health and Readiness
+
+Task 3 implements separate liveness and readiness probes for the deployed service.
+
+### Implementation
+
+Two HTTP endpoints are provided:
+
+* `GET /healthz` — liveness probe that confirms the FastAPI application is running.
+* `GET /readyz` — readiness probe that confirms the dependencies required by the LangChain service are configured.
+
+The readiness check verifies that the required `OPENROUTER_API_KEY`, `MODEL_NAME`, and `BASE_URL` environment variables are available.
+
+The liveness probe does not depend on external configuration. Therefore, the application can remain alive while reporting that it is not ready to serve model requests.
+
+### Run Task 3
+
+From the project root:
+
+```bash
+uv run uvicorn health_readiness.health_readiness:app --reload
+```
+
+The probes can then be accessed locally at:
+
+```text
+http://127.0.0.1:8000/healthz
+http://127.0.0.1:8000/readyz
+```
+
+### Liveness
+
+A healthy running application returns:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+with HTTP status `200`.
+
+### Readiness
+
+When all required dependencies are configured, `/readyz` returns:
+
+```json
+{
+  "status": "ready"
+}
+```
+
+with HTTP status `200`.
+
+If a required dependency such as `OPENROUTER_API_KEY` is unavailable, the readiness probe returns HTTP status `503`.
+
+This separates application liveness from the application's ability to serve model requests.
+
+### Automated Tests
+
+The Task 3 automated tests verify:
+
+* successful liveness response
+* successful readiness response when dependencies are configured
+* readiness failure when a required dependency is missing
+
+Run the tests with:
+
+```bash
+uv run pytest tests/test_health_readiness.py -v
+```
+
+Save the test evidence with:
+
+```bash
+uv run pytest tests/test_health_readiness.py -v > outputs/test_health_readiness.txt 2>&1
+```
+
+Screenshots of successful liveness and readiness responses and the saved pytest output are included in the `outputs/` folder as supporting evidence.
